@@ -25,13 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle image upload errors
     if ($_FILES['photo']['error'] == 0) {
         $tempName = $_FILES['photo']['tmp_name'];
-        $targetDirectory =  './admin/admin/uploads/';
+        $targetDirectory =  'Image/';
 
         if (!file_exists($targetDirectory)) {
             mkdir($targetDirectory, 0777, true);
         }
 
-        $fileName = "{$firstName}.jpg";
+        // Move uploaded file to target directory
+        $fileName = uniqid() . '.jpg'; // Unique file name to avoid conflicts
         $targetFilePath = $targetDirectory . $fileName;
 
         if (move_uploaded_file($tempName, $targetFilePath)) {
@@ -56,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Insert doctor data into doctors table
-            $sqlDoctor = "INSERT INTO doctors (first_name, middle_name, last_name, email, mobile_number, website, address, state, district, pincode, introduction, experience, photo, specialization_name, sub_specialization_name,years_as_specialist) 
-            VALUES ('$firstName', '$middleName', '$lastName', '$email', '$mobileNumber', '$website', '$address', '$selectedState', '$selectedDistrict', '$pincode', '$introduction',  '$experience', '$targetFilePath', '$specializationName', '" . implode(",", $subSpecializationNames) . "','$yearsAsSpecialist')";
+            $sqlDoctor = "INSERT INTO doctors (first_name, middle_name, last_name, email, mobile_number, website, address, state, district, pincode, introduction, experience, photo, specialization_name, sub_specialization_name, years_as_specialist) 
+            VALUES ('$firstName', '$middleName', '$lastName', '$email', '$mobileNumber', '$website', '$address', '$selectedState', '$selectedDistrict', '$pincode', '$introduction', '$experience', '$targetFilePath', '$specializationName', '" . implode(",", $subSpecializationNames) . "','$yearsAsSpecialist')";
 
             if ($conn->query($sqlDoctor) === TRUE) {
                 $doctorId = $conn->insert_id; // Get the ID of the newly inserted doctor
@@ -280,6 +281,7 @@ if ($result->num_rows > 0) {
             </div>
         </div>
         <div id="education-section-container">
+        
             <!-- Initial education section -->
             <div class="row mb-3 education-section">
                 <h5>Education</h5>
@@ -295,15 +297,17 @@ if ($result->num_rows > 0) {
                     <label for="completionYear_1" class="form-label">Completion Year:</label>
                     <input type="text" class="form-control" name="completionYear[]" placeholder="Year">
                 </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-success" id="addEducation">Add More Education</button>
-                </div>
+                
             </div>
         </div>
 
 
 
-        <div id="experience-section-container">
+        <div  id="experience-section-container">
+        <div class="col-sm-4">
+                    <button type="button" class="btn btn-success" id="addEducation">Add More Education</button>
+                </div>
+     
             <!-- Initial experience section -->
             <div class="row mb-3 experience-section">
                 <h5>Experience</h5>
@@ -315,20 +319,22 @@ if ($result->num_rows > 0) {
                     <label for="organization_1" class="form-label">Organization :</label>
                     <input type="text" class="form-control" name="organization[]" placeholder="Organization">
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <label for="experienceYears_1" class="form-label">Years of Experience:</label>
                     <input type="text" class="form-control" name="experienceYears[]" placeholder="Years">
                 </div>
-                <div class="col-sm-2">
-                    <button type="button" class="btn btn-success" id="addExperience">Add More Experience</button>
-
-                </div>
+               
             </div>
+          
         </div>
 
 
         <!-- Awards and Recognitions Section -->
         <div id="awards-section-container">
+        <div class="col-sm-4">
+                    <button type="button" class="btn btn-success" id="addExperience">Add More Experience</button>
+
+                </div>
             <!-- Initial awards section -->
             <div class="row mb-3 awards-section" id="awards_section_1">
                 <h5>Awards and Recognitions</h5>
@@ -340,16 +346,17 @@ if ($result->num_rows > 0) {
                     <label for="awardYear_1" class="form-label">Year:</label>
                     <input type="text" class="form-control" name="awardYear[]" id="awardYear_1" placeholder="Year">
                 </div>
-                <div class="col-sm-4">
-                    <!-- Add More Awards and Recognitions Button -->
-                    <button type="button" class="btn btn-success" id="addAwards">Add More Awards and Recognitions</button>
-                </div>
+                
             </div>
         </div>
 
 
         <!-- Memberships Section -->
         <div id="memberships-section-container">
+        <div class="col-sm-6">
+                    <!-- Add More Awards and Recognitions Button -->
+                    <button type="button" class="btn btn-success" id="addAwards">Add More Awards and Recognitions</button>
+                </div>
             <!-- Initial memberships section -->
             <div class="row mb-3 memberships-section" id="memberships_section_1">
                 <h5>Memberships</h5>
@@ -361,16 +368,17 @@ if ($result->num_rows > 0) {
                     <label for="membershipYear_1" class="form-label">Year:</label>
                     <input type="text" class="form-control" name="membershipYear[]" id="membershipYear_1" placeholder="Year">
                 </div>
-                <div class="col-sm-4">
-                    <!-- Add More Memberships Button -->
-                    <button type="button" class="btn btn-success" id="addMemberships">Add More Memberships</button>
-
-                </div>
+               
             </div>
         </div>
 
         <!-- Registrations Section -->
         <div id="registrations-section-container">
+        <div class="col-sm-6">
+                    <!-- Add More Memberships Button -->
+                    <button type="button" class="btn btn-success" id="addMemberships">Add More Memberships</button>
+
+                </div>
             <!-- Initial registrations section -->
             <div class="row mb-3 registrations-section" id="registrations_section_1">
                 <h5>Registrations</h5>
@@ -382,14 +390,14 @@ if ($result->num_rows > 0) {
                     <label for="registrationYear_1" class="form-label">Year:</label>
                     <input type="text" class="form-control" name="registrationYear[]" id="registrationYear_1" placeholder="Year">
                 </div>
-                <div class="col-sm-4">
-                    <button type="button" class="btn btn-success" id="addRegistrations">Add More Registrations</button>
-                </div>
+               
             </div>
         </div>
         <!-- Add More Registrations Button -->
 
-
+        <div class="col-sm-6">
+                    <button type="button" class="btn btn-success" id="addRegistrations">Add More Registrations</button>
+                </div>
 
         <div class="col">
             <!-- Introduction Textarea -->
@@ -399,7 +407,11 @@ if ($result->num_rows > 0) {
         <div class="col">
             <div id="selectedSpecialization"></div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Data</button>
+        <div class="d-flex justify-content-center mt-5">
+        <button type="submit" class="btn btn-primary text-center">Submit Data</button>
+        </div>
+
+        
     </form>
 
 

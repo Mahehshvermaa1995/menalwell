@@ -34,6 +34,7 @@
     </style>
 </head>
 <body>
+    <img src="./admin/Image/." alt="">
     <!-- Include header.php -->
     <?php include 'header.php'; ?>
 
@@ -47,9 +48,25 @@
         if (isset($_POST['searchBar'])) {
             // Get the search input
             $searchInput = mysqli_real_escape_string($conn, $_POST['searchBar']);
-
-            // Fetch doctors based on specialization_name or sub_specialization_name
-            $sql = "SELECT * FROM doctors WHERE specialization_name LIKE '%$searchInput%' OR sub_specialization_name LIKE '%$searchInput%'";
+    
+            // Split the search input into individual words
+            $searchWords = explode(" ", $searchInput);
+            
+            // Construct a WHERE clause to match any word in specialization_name, sub_specialization_name, or doctor's name
+            $whereClause = "";
+            foreach ($searchWords as $word) {
+                $word = mysqli_real_escape_string($conn, $word);
+                $whereClause .= "specialization_name LIKE '%$word%' OR sub_specialization_name LIKE '%$word%' OR CONCAT_WS(' ', first_name, middle_name, last_name) LIKE '%$word%' OR ";
+            }
+            // Remove the last "OR" from the whereClause
+            $whereClause = rtrim($whereClause, "OR ");
+    
+            // Construct the SQL query
+            $sql = "SELECT * FROM doctors WHERE $whereClause";
+            
+            // Execute the query and handle the results as needed...
+        
+    
             $result = $conn->query($sql);
 
             if ($result) {
@@ -65,7 +82,7 @@
 
                         // Display doctor image if available, otherwise use a placeholder
                         if (!empty($row['photo'])) {
-                            echo "<img src='./admin{$row['photo']}' class='img-fluid rounded p-5' alt='Doctor Image'>";
+                            echo "<img src='./admin/{$row['photo']}' class='img-fluid rounded p-5' alt='Doctor Image'>";
                         } else {
                             echo "<img src='placeholder.jpg' class='img-fluid rounded' alt='Doctor Image'>";
                         }
@@ -113,6 +130,7 @@
                             </div>
                             <div id='offcanvasContent' class='offcanvas-body'>
                                 <!-- Time slot content will be loaded here -->
+                            
                             </div>
                         </div>";
 

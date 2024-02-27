@@ -4,196 +4,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Slot Selection</title>
+    <title>Doctor Search</title>
     <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        .time-slot {
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            padding: 5px;
+        /* Added styles for the suggestion box */
+        #suggestionBox {
+            display: none;
+          width: 50%;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-top: none;
+            z-index: 9999;
+            /* Set z-index to ensure it appears above other elements */
+        }
+
+        #suggestionBox .list-group-item {
             cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .time-slot:hover {
-            background-color: #f5f5f5;
-        }
-
-        .time-slot-group {
-            margin-bottom: 20px;
+            
         }
     </style>
 </head>
-
+<?php include 'header.php'; ?>
 <body>
-    <div class="container">
-        <h3></h3>
-        <!-- Date Selection Dropdown -->
-        <div class="row">
-            <div class="col-md-6">
-                <label for="datepicker">Select Date:</label>
-                <select id="datepicker" class="form-control">
-                    <?php
-                    // PHP code to generate options for next 30 days
-                    for ($i = 0; $i < 30; $i++) {
-                        $date = date('Y-m-d', strtotime("+$i days"));
-                        echo "<option value='$date'>$date</option>";
-                    }
-                    ?>
-                </select>
+    
+<div class="container" style="background-color: rgb(243 244 244); height: 50vh; margin-top: 100px; ">
+    <div class="row justify-content-center">
+        <div class="col-2 mb-3">
+            <div class="card border border-0 rounded-circle p-3" style=" background-color: rgb(24 205 205); width:100px; height:100px;">
+                <img src="./Image/hospitalnav.png" class="card-img-top w-75 ms-2" alt="...">
+                <p class="text-center text-white " style="font-size: 10px;">Find Hospitals</p>
             </div>
         </div>
+        <div class="col-2 mb-3">
+            <div class="card border border-0 rounded-circle p-3" style=" background-color: rgb(24 205 205); width:100px; height:100px;">
+                <img src="./Image/navIocn6.png" class="card-img-top w-75 ms-2" alt="...">
+                <p class="text-center text-white " style="font-size: 10px;">Find Doctors</p>
+            </div>
+        </div>
+        <div class="col-2 mb-3">
+            <div class="card border border-0 rounded-circle p-3" style=" background-color: rgb(24 205 205); width:100px; height:100px;">
+                <img src="./Image/navIocn7.png" class="card-img-top w-75 ms-2" alt="...">
+                <p class="text-center text-white " style="font-size: 10px;">Find Clinics</p>
+            </div>
+        </div>
+        <div class="col-2 mb-3">
+            <div class="card border border-0 rounded-circle p-2" style=" background-color: rgb(24 205 205); width:100px; height:100px;">
+                <img src="./Image/navIocn8.png" class="card-img-top w-75 ms-2" alt="...">
+                <p class="text-center text-white " style="font-size: 10px;">Medical Records</p>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12">
+        <form role="search" action="doctor_list.php" method="post" onsubmit="return validateSearchInput();">
+        <div class="d-flex justify-content-center">
+            
+        <div class="input-group w-75" style="height: 50px;">
+                <!-- Input for search -->
+                <input type="text" class="form-control" id="searchBar" name="searchBar" placeholder="Search by Specialization" aria-label="Search" style="height: 50px;" required>
+                <!-- Search button -->
+                <button type="submit" class="btn btn-primary" style="background-color: rgb(24 205 205); height: 50px; width:100px;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center"> 
+            <!-- Suggestions dropdown -->
+            <div id="suggestionBox" class="mt-2"></div>
+        </div>
+           
+        </form>
+        </div>
+    </div>
+</div>
+<div class="row mt-4 justify-content-center ">
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/gp.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">General Physician</p>
+            </a>
+        </div>
+
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/pediatrician.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Pediatrician </p>
+            </a>
+        </div>
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/therapist.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">General practitioner </p>
+            </a>
+        </div>
+
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/dermatologist.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Dermatologist</p>
+            </a>
+        </div>
+    </div>
+    <div class="row justify-content-center ">
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/optometrist.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Ophthalmology
+                </p>
+            </a>
+        </div>
+
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/surgeon.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Surgeon
+                </p>
+            </a>
+        </div>
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/urology.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Urologist
+                </p>
+            </a>
+        </div>
+
+        <div class="col-sm-2 boder-1 bg-white rounded" style="width: 130px; height:100px;">
+            <a href="" class="text-decoration-none ">
+                <img src="./Image/ultrasound.png" class="card-img-top ms-5 mt-3 mb-1 " style="width: 30%;" alt="...">
+                <br>
+                <p class="text-center">Ultrasound Centre</p>
+            </a>
+        </div>
+    </div>
+    <div class="container mt-3 d-flex justify-content-center">
         <div class="row">
-            <div class="col-md-12">
-                <div id="timeSlots" class="row">
-                    <?php
-                    // Include database connection
-                    include_once 'sql_connection.php';
+            <div class="col-12">
+                <button id="showMoreBtn" class="btn btn-secondary bg-1">Show More</button>
+            </div>
 
-                    // Initialize selected date to current date
-                    $selectedDate = date('Y-m-d');
+            <div class="col-12">
+                <ul id="itemList" class="list-unstyled d-none">
+                    <li><a class="text-decoration-none" href="#">Plastic Surgery</a></li>
+                    <li><a class="text-decoration-none" href="#">General Medicine</a></li>
+                    <li><a class="text-decoration-none" href="#">Cardiologist</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-3 d-flex justify-content-center">
+        <div class="row">
+            <div class="col-12">
+                <button id="showMoreBtn" class="btn btn-secondary bg-1">Show More</button>
+            </div>
 
-                    // Check if doctor_id is provided in the GET parameters
-                    if (isset($_GET['doctor_id'])) {
-                        // Get doctor_id from GET parameters
-                        $doctorId = $_GET['doctor_id'];
-
-                        // Fetch booked slots from the book_appointments table for the specific doctor
-                        $bookedSlots = array();
-                        $bookedQuery = "SELECT appointment_time FROM book_appointments WHERE doctor_id = $doctorId";
-                        $bookedResult = $conn->query($bookedQuery);
-
-                        // Fetch data from clinics table for the specific doctor
-                        $clinicQuery = "SELECT * FROM clinics WHERE doctor_id = $doctorId";
-                        $clinicResult = $conn->query($clinicQuery);
-
-                        // Fetch existing appointments for the selected date
-                        $existingAppointmentsQuery = "SELECT appointment_date, appointment_time FROM appointments WHERE doctor_id = $doctorId AND appointment_date = '$selectedDate'";
-                        $existingAppointmentsResult = $conn->query($existingAppointmentsQuery);
-                        $existingAppointments = array();
-                        if ($existingAppointmentsResult && $existingAppointmentsResult->num_rows > 0) {
-                            while ($row = $existingAppointmentsResult->fetch_assoc()) {
-                                $existingAppointments[] = $row;
-                            }
-                        }
-
-                        // Function to generate time slots with 30-minute intervals for a specific date
-                        function generateTimeSlots($startTime, $endTime, $bookedSlots, $existingAppointments)
-                        {
-                            $slots = array();
-                            $currentTime = strtotime($startTime);
-                            $endTime = strtotime($endTime);
-                            while ($currentTime <= $endTime) {
-                                $slot = date('h:i A', $currentTime);
-                                // Check if slot is available (not booked and not overlapping with existing appointments)
-                                if (!in_array($slot, $bookedSlots) && !isOverlappingAppointment($slot, $existingAppointments)) {
-                                    $slots[] = $slot;
-                                }
-                                $currentTime += 1800; // Add 30 minutes
-                            }
-                            return $slots;
-                        }
-
-                        // Function to check if a time slot overlaps with existing appointments
-                        function isOverlappingAppointment($slot, $existingAppointments)
-                        {
-                            foreach ($existingAppointments as $appointment) {
-                                if ($appointment['appointment_time'] === $slot) {
-                                    return true; // Overlapping appointment found
-                                }
-                            }
-                            return false; // No overlapping appointment found
-                        }
-
-                        // Pass $bookedSlots to the frontend
-                        echo "<script>var bookedSlots = " . json_encode($bookedSlots) . ";</script>";
-
-                        if ($clinicResult) {
-                            if ($clinicResult->num_rows > 0) {
-                                // Loop through each clinic
-                                while ($row = $clinicResult->fetch_assoc()) {
-                                    // Generate time slots
-                                    $morningSlots = generateTimeSlots($row['MorningStartTime'], $row['MorningEndTime'], $bookedSlots, $existingAppointments);
-                                    $afternoonSlots = generateTimeSlots($row['AfternoonStartTime'], $row['AfternoonEndTime'], $bookedSlots, $existingAppointments);
-                                    $eveningSlots = generateTimeSlots($row['EveningStartTime'], $row['EveningEndTime'], $bookedSlots, $existingAppointments);
-
-                                    // Display time slots for morning, afternoon, and evening
-                                    echo "<div class='clinic-time-slots col-md-12' data-clinic-id='" . $row['ClinicID'] . "'>";
-                                    echo "<div class='time-slot-group row'>";
-                                    echo "<h5>Morning Slots:</h5>";
-                                    foreach ($morningSlots as $slot) {
-                                        echo "<a class='time-slot col-3'
-                                    href='book_appointment.php?doctor_id=$doctorId&time=" . urlencode($slot) . "&day=Morning&date=$selectedDate&clinic_id=" . $row['ClinicID'] . "'>
-                                     $slot
-                                 </a>";
-                                    }
-                                    echo "</div>";
-                                    echo "<div class='time-slot-group row'>";
-                                    echo "<h5>Afternoon Slots:</h5>";
-                                    foreach ($afternoonSlots as $slot) {
-                                        echo "<a class='time-slot col-3'
-                                    href='book_appointment.php?doctor_id=$doctorId&time=" . urlencode($slot) . "&day=Afternoon&date=$selectedDate&clinic_id=" . $row['ClinicID'] . "'>
-                                     $slot
-                                 </a>";
-                                    }
-                                    echo "</div>";
-                                    echo "<div class='time-slot-group row'>";
-                                    echo "<h5>Evening Slots:</h5>";
-                                    foreach ($eveningSlots as $slot) {
-                                        echo "<a class='time-slot col-3'
-                                    href='book_appointment.php?doctor_id=$doctorId&time=" . urlencode($slot) . "&day=Evening&date=$selectedDate&clinic_id=" . $row['ClinicID'] . "'>
-                                     $slot
-                                 </a>";
-                                    }
-                                    echo "</div>";
-                                    echo "</div>";
-                                }
-                            } else {
-                                echo "No clinics found for this doctor.";
-                            }
-                        } else {
-                            echo "Error fetching clinics: " . $conn->error;
-                        }
-
-                        // Close the connection
-                        $conn->close();
-                    } else {
-                        // doctor_id parameter is missing
-                        echo "<p>Missing doctor ID.</p>";
-                    }
-                    ?>
-                </div>
+            <div class="col-12">
+                <ul id="itemList" class="list-unstyled d-none">
+                    <li><a class="text-decoration-none" href="#">Plastic Surgery</a></li>
+                    <li><a class="text-decoration-none" href="#">General Medicine</a></li>
+                    <li><a class="text-decoration-none" href="#">Cardiologist</a></li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <div class="container-fluid mt-5">
+        <div class="container">
+            <div class="row  ">
+                <h4 class="text-1">Featured of Services</h4>
+                <div class="col-lg-4 mt-4 mb-5 ">
+                    <div class="card p-3 " id="border-1" style="background-color: rgb(243 244 244);">
+
+                        <h5 class="card-title text-uppercase text-center text-1 ">Talk to Doctor</h5>
+                        <div class="col-12 d-flex justify-content-center ">
+                            <img src="./Image/TALK TO DOCTOR.jpg" class="w-50" alt="...">
+                        </div>
+                        <a href="#" class="card-link text-center text-1 mt-3 text-decoration-none"><button type="button" class="btn btn-info text-white fs-5">Talk To Us</button></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mt-4 mb-5 ">
+                    <div class="card p-3 " id="border-1" style="background-color: rgb(243 244 244);">
+
+                        <h5 class="card-title text-uppercase text-center text-1 "> Chat's With Doctor</h5>
+                        <div class="col-12 d-flex justify-content-center ">
+                            <img src="./Image/text chat with doctor.jpg" class="w-50" alt="...">
+                        </div>
+                        <a href="#" class="card-link text-center text-1 mt-3 text-decoration-none"><button type="button" class="btn btn-info text-white fs-5">CHAT'S To Us</button></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 mt-4 mb-5 ">
+                    <div class="card p-2 pt-3 " id="border-1" style="background-color: rgb(243 244 244);">
+
+                        <h5 class="card-title text-uppercase fs-5 text-center text-1 ">Video Consultation to Doctor</h5>
+                        <div class="col-12 d-flex justify-content-center ">
+                            <img src="./Image/chat with doctor.jpg" class="w-50" alt="...">
+                        </div>
+                        <a href="#" class="card-link text-center text-1 mt-3 text-decoration-none"><button type="button" class="btn btn-info text-white fs-5">video Chat's With Us</button></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid p-3 " style="background-color: rgb(243 244 244);">
+        <div class="container mt-2">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img style="width: 100%;" class="img-fluid p-3" src="./Image/about.jpg" alt="">
+                </div>
+                <div class="col-lg-6 p-2">
+                    <h1 class="text-center"> About Us</h1>
+                    <h5> Welcome to menalwell technologies pvt ltd</h5>
+                    <p> At menalwell technologies pvt ltd we are passionate about [briefly describe the core mission or purpose of your company]. Founded in [year of establishment], we have been on a journey to [mention any significant milestones or achievements].</p>
+
+                    <h5> What Sets Us Apart</h5>
+                    <ul>
+                        <li>Innovation: [Highlight any innovative approaches, technologies, or solutions your company employs.]</li>
+                        <li> Customer-Centric: [Emphasize your commitment to providing excellent customer service and meeting the needs of your clients.]</li>
+                        <li> Quality Assurance: [If applicable, discuss any quality standards or practices that set your products or services apart.]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php include 'footer.php' ?>
+    <!-- Bootstrap JS (optional, if needed) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- jQuery (required for AJAX) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Initialize datepicker
-            $('#datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                autoclose: true,
+            $('#searchBar').keyup(function() {
+                var query = $(this).val();
+                if (query !== '') {
+                    $.ajax({
+                        url: "suggest_doctors.php",
+                        method: "POST",
+                        data: {
+                            query: query
+                        },
+                        success: function(data) {
+                            $('#suggestionBox').fadeIn();
+                            $('#suggestionBox').html(data);
+                        }
+                    });
+                } else {
+                    // If the search bar is empty, hide the suggestion box
+                    $('#suggestionBox').fadeOut();
+                }
             });
 
-            // Pass doctorId from PHP to JavaScript
-            var doctorID = <?php echo isset($doctorId) ? $doctorId : 0; ?>;
+            // Hide the suggestion box when clicking outside of it
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#suggestionBox').length && !$(e.target).closest('#searchBar').length) {
+                    $('#suggestionBox').fadeOut();
+                }
+            });
 
-            // Handle click on time slot
-            $('.time-slot').click(function(event) {
-                event.preventDefault(); // Prevent default link behavior
-                var clinicID = $(this).closest('.clinic-time-slots').data('clinic-id');
-                var time = $(this).text();
-                var day = $(this).data('day');
-                var selectedDate = $('#datepicker').val(); // Get selected date from datepicker
-                // Redirect to book_appointment.php with parameters
-                window.location.href = "book_appointment.php?doctor_id=" + doctorID + "&time=" + encodeURIComponent(time) + "&day=" + day + "&date=" + selectedDate + "&ClinicID=" + clinicID;
+            // Fill the search bar with clicked suggestion and hide the suggestion box
+            $(document).on('click', '#suggestionBox .list-group-item', function() {
+                $('#searchBar').val($(this).text());
+                $('#suggestionBox').fadeOut();
             });
         });
     </script>

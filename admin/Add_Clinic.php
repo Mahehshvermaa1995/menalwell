@@ -29,45 +29,27 @@
 include '../sql_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $doctorID = isset($_POST['doctorID']) ? $_POST['doctorID'] : '';
+    $doctorName = isset($_POST['doctorName']) ? $_POST['doctorName'] : '';
 
-    // Ensure doctorID is a valid integer
-    $doctorID = intval($doctorID);
+    // Fetching doctors based on name search
+    $doctorIDQuery = "SELECT ID, first_name, specialization_name FROM doctors WHERE first_name LIKE '%$doctorName%' LIMIT 5";
+    $doctorIDResult = $conn->query($doctorIDQuery);
 
-    // Check if the doctorID is valid
-    if ($doctorID > 0) {
-        // Proceed to add a new clinic
-        $clinicName = isset($_POST['clinicName']) ? mysqli_real_escape_string($conn, $_POST['clinicName']) : null;
-        $clinicAddress = isset($_POST['clinicAddress']) ? mysqli_real_escape_string($conn, $_POST['clinicAddress']) : null;
-        $openingDays = isset($_POST['openingDays']) ? implode(",", $_POST['openingDays']) : null;
-
-        $morningStartTime = isset($_POST['morningStartTime']) ? $_POST['morningStartTime'] : null;
-        $morningEndTime = isset($_POST['morningEndTime']) ? $_POST['morningEndTime'] : null;
-
-        $afternoonStartTime = isset($_POST['afternoonStartTime']) ? $_POST['afternoonStartTime'] : null;
-        $afternoonEndTime = isset($_POST['afternoonEndTime']) ? $_POST['afternoonEndTime'] : null;
-
-        $eveningStartTime = isset($_POST['eveningStartTime']) ? $_POST['eveningStartTime'] : null;
-        $eveningEndTime = isset($_POST['eveningEndTime']) ? $_POST['eveningEndTime'] : null;
-
-        $sql = "INSERT INTO Clinics (DoctorID, ClinicName, ClinicAddress, OpeningDays, MorningStartTime, MorningEndTime, AfternoonStartTime, AfternoonEndTime, EveningStartTime, EveningEndTime) 
-                VALUES ('$doctorID', '$clinicName', '$clinicAddress', '$openingDays', '$morningStartTime', '$morningEndTime', '$afternoonStartTime', '$afternoonEndTime', '$eveningStartTime', '$eveningEndTime')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('Clinic added successfully.');
-                window.location.href = 'dashboard.php';</script>";
-        } else {
-            echo "<script>alert('Failed to add clinic: " . mysqli_error($conn) . "');</script>";
+    if ($doctorIDResult->num_rows > 0) {
+        while ($row = $doctorIDResult->fetch_assoc()) {
+            echo "<tr>
+                <td>" . $row['ID'] . "</td>
+                <td>" . $row['first_name'] . "</td>
+                <td>" . $row['specialization_name'] . "</td>
+                <td><button onclick='document.getElementById(\"doctorID\").value = " . $row['ID'] . "; toggleClinicForm();'>Add Clinic</button></td>
+              </tr>";
         }
     } else {
-        echo "<script>alert('Invalid doctor ID.');</script>";
+        echo "<tr><td colspan='4'>No doctors found</td></tr>";
     }
+    exit; // Stop further execution after displaying the search results
 }
-
-$conn->close();
 ?>
-
-
 <body>
 
     <div class="container">
@@ -88,27 +70,7 @@ $conn->close();
                 <th>specialization_name</th>
                 <th>Add Clinic</th>
             </tr>
-            <?php
-            include '../sql_connection.php';
-
-            $doctorName = isset($_POST['doctorName']) ? $_POST['doctorName'] : '';
-
-            $doctorIDQuery = "SELECT ID, first_name, specialization_name FROM doctors WHERE first_name LIKE '%$doctorName%'";
-            $doctorIDResult = $conn->query($doctorIDQuery);
-
-            if ($doctorIDResult->num_rows > 0) {
-                while ($row = $doctorIDResult->fetch_assoc()) {
-                    echo "<tr>
-                        <td>" . $row['ID'] . "</td>
-                        <td>" . $row['first_name'] . "</td>
-                        <td>" . $row['specialization_name'] . "</td>
-                        <td><button onclick='document.getElementById(\"doctorID\").value = " . $row['ID'] . "; toggleClinicForm();'>Add Clinic</button></td>
-                      </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='4'>No doctors found</td></tr>";
-            }
-            ?>
+            <!-- PHP code block results will be displayed here -->
         </table>
 
         <div id="addClinicForm" class="hidden">
